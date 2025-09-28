@@ -45,7 +45,6 @@ Django + DRF + JWT with a custom Admin Panel.
 - /adminpanel/task-reports/
 
 # Project Structure (key)
-- core/settings.py  – settings, REST/JWT
 - core/urls.py  – routes for accounts, adminpanel, api
 - accounts/  – custom user (role , assigned_admin )
 - tasks/  – Task model, API views/serializers
