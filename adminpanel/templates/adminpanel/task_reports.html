@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2 class="mb-4">Task Reports</h2>
+<table class="table table-striped">
+    <thead>
+        <tr><th>Task</th><th>User</th><th>Report</th><th>Worked Hours</th></tr>
+    </thead>
+    <tbody>
+    {% for report in reports %}
+    <tr>
+        <td>{{ report.title }}</td>
+        <td>{{ report.assigned_to.username }}</td>
+        <td>{{ report.completion_report }}</td>
+        <td>{{ report.worked_hours }}</td>
+    </tr>
+    {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

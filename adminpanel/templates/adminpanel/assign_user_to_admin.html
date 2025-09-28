@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+{% block title %}Assign User to Admin{% endblock %}
+{% block content %}
+<h2 class="mb-4">Assign User to Admin</h2>
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="btn btn-primary">Assign</button>
+    <a href="{% url 'adminpanel:manage_users' %}" class="btn btn-secondary">Cancel</a>
+</form>
+{% endblock %}

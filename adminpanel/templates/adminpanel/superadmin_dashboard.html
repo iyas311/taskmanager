@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2 class="mb-4">SuperAdmin Dashboard</h2>
+<ul class="list-group mb-3">
+    <li class="list-group-item"><a href="{% url 'adminpanel:manage_users' %}">Manage Users</a></li>
+    <li class="list-group-item"><a href="{% url 'adminpanel:manage_admins' %}">Manage Admins</a></li>
+    <li class="list-group-item"><a href="{% url 'adminpanel:manage_tasks' %}">Manage All Tasks</a></li>
+    <li class="list-group-item"><a href="{% url 'adminpanel:task_reports' %}">View Task Reports</a></li>
+</ul>
+{% endblock %}

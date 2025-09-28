@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+{% block title %}Create User{% endblock %}
+{% block content %}
+<h2 class="mb-4">Create New User</h2>
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <div class="mb-3">
+        <label for="id_password" class="form-label">Password</label>
+        <input type="password" name="password" id="id_password" class="form-control" required>
+    </div>
+    <button type="submit" class="btn btn-primary">Create</button>
+    <a href="{% url 'adminpanel:manage_users' %}" class="btn btn-secondary">Cancel</a>
+</form>
+{% endblock %}

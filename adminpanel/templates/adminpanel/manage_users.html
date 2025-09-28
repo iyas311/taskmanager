@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2 class="mb-4">Manage Users</h2>
+<table class="table table-striped">
+    <thead>
+    <tr><th>Username</th><th>Email</th><th>Role</th><th>Assigned Admin</th><th>Actions</th></tr>
+    </thead>
+    <tbody>
+    {% for user in users %}
+    <tr>
+        <td>{{ user.username }}</td>
+        <td>{{ user.email }}</td>
+        <td>{{ user.get_role_display }}</td>
+        <td>{% if user.assigned_admin %}{{ user.assigned_admin.username }}{% else %}-{% endif %}</td>
+        <td>
+            <a href="{% url 'adminpanel:edit_user' user.id %}" class="btn btn-sm btn-primary">Edit</a>
+            <a href="{% url 'adminpanel:delete_user' user.id %}" class="btn btn-sm btn-danger">Delete</a>
+        </td>
+    </tr>
+    {% endfor %}
+    </tbody>
+</table>
+<a href="{% url 'adminpanel:create_user' %}" class="btn btn-success">Create New User</a>
+{% endblock %}

@@ -1,0 +1,61 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "Django Start Project",
+			"type": "shell",
+			"command": "C:/Users/iyas2/OneDrive/Desktop/task/.venv/Scripts/python.exe -m django startproject core .",
+			"isBackground": false,
+			"group": "build"
+		},
+		{
+			"label": "Django Start App",
+			"type": "shell",
+			"command": "C:/Users/iyas2/OneDrive/Desktop/task/.venv/Scripts/python.exe manage.py startapp tasks",
+			"isBackground": false,
+			"group": "build"
+		},
+		{
+			"label": "Django Start App (accounts)",
+			"type": "shell",
+			"command": "C:/Users/iyas2/OneDrive/Desktop/task/.venv/Scripts/python.exe manage.py startapp accounts",
+			"isBackground": false,
+			"group": "build"
+		},
+		{
+			"label": "makemigrations",
+			"type": "shell",
+			"command": "C:/Users/iyas2/OneDrive/Desktop/task/.venv/Scripts/python.exe manage.py makemigrations",
+			"isBackground": false,
+			"group": "build"
+		},
+		{
+			"label": "makemigrations (retry)",
+			"type": "shell",
+			"command": "C:/Users/iyas2/OneDrive/Desktop/task/.venv/Scripts/python.exe manage.py makemigrations",
+			"isBackground": false,
+			"group": "build"
+		},
+		{
+			"label": "migrate",
+			"type": "shell",
+			"command": "C:/Users/iyas2/OneDrive/Desktop/task/.venv/Scripts/python.exe manage.py migrate",
+			"isBackground": false,
+			"group": "build"
+		},
+		{
+			"label": "Run Django Server",
+			"type": "shell",
+			"command": "C:/Users/iyas2/OneDrive/Desktop/task/.venv/Scripts/python.exe manage.py runserver",
+			"isBackground": true,
+			"group": "build"
+		},
+		{
+			"label": "Run Django Server",
+			"type": "shell",
+			"command": "C:/Users/iyas2/OneDrive/Desktop/task/.venv/Scripts/python.exe manage.py runserver",
+			"isBackground": true,
+			"group": "build"
+		}
+	]
+}

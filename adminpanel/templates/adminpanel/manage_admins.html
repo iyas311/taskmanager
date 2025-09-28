@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2 class="mb-4">Manage Admins</h2>
+<table class="table table-striped">
+    <thead>
+    <tr><th>Username</th><th>Email</th><th>Role</th><th>Assigned Users</th><th>Actions</th></tr>
+    </thead>
+    <tbody>
+    {% for admin in admins %}
+    <tr>
+        <td>{{ admin.username }}</td>
+        <td>{{ admin.email }}</td>
+        <td>{{ admin.get_role_display }}</td>
+        <td>
+            {% with count=admin.assigned_users.count %}
+                <span class="badge text-bg-secondary me-2">{{ count }}</span>
+            {% endwith %}
+            {% for user in admin.assigned_users.all %}
+                <span class="badge text-bg-light border">{{ user.username }}</span>
+            {% empty %}-{% endfor %}
+        </td>
+        <td>
+            <a href="{% url 'adminpanel:edit_user' admin.id %}" class="btn btn-sm btn-primary">Edit</a>
+            <a href="{% url 'adminpanel:delete_user' admin.id %}"
+               class="btn btn-sm btn-danger"
+               onclick="return confirm('Delete admin {{ admin.username }}? This cannot be undone.');">Delete</a>
+        </td>
+    </tr>
+    {% endfor %}
+    </tbody>
+</table>
+<a href="{% url 'adminpanel:create_admin' %}" class="btn btn-success">Create New Admin</a>
+{% endblock %}
