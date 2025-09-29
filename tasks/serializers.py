@@ -91,6 +91,20 @@ class TaskSerializer(serializers.ModelSerializer):
 
 
 class TaskReportSerializer(serializers.ModelSerializer):
+    assigned_to_id = serializers.IntegerField(source='assigned_to.id', read_only=True)
+    assigned_to_username = serializers.CharField(source='assigned_to.username', read_only=True)
+    assigned_by_id = serializers.IntegerField(source='assigned_by.id', read_only=True, allow_null=True)
+    assigned_by_username = serializers.SerializerMethodField()
+
     class Meta:
         model = Task
-        fields = ['id', 'completion_report', 'worked_hours']
+        fields = [
+            'id', 'title', 'description', 'status', 'due_date',
+            'completion_report', 'worked_hours',
+            'assigned_to_id', 'assigned_to_username',
+            'assigned_by_id', 'assigned_by_username',
+            'created_at', 'updated_at',
+        ]
+
+    def get_assigned_by_username(self, obj):
+        return getattr(obj.assigned_by, 'username', None)

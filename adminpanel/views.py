@@ -14,7 +14,6 @@ def create_admin(request):
         return HttpResponseForbidden()
     if request.method == 'POST':
         form = UserEditForm(request.POST)
-        # Do not show/accept assigned_admin when creating an admin
         if 'assigned_admin' in form.fields:
             form.fields.pop('assigned_admin')
         if form.is_valid():
@@ -26,7 +25,6 @@ def create_admin(request):
             return redirect(reverse('adminpanel:manage_admins'))
     else:
         form = UserEditForm()
-        # Remove assigned_admin field from admin creation form
         if 'assigned_admin' in form.fields:
             form.fields.pop('assigned_admin')
     return render(request, 'adminpanel/create_admin.html', {'form': form})
@@ -39,7 +37,6 @@ def create_user(request):
         form = UserEditForm(request.POST)
         if form.is_valid():
             user = form.save(commit=False)
-            # Default role to 'user' if not provided
             if not getattr(user, 'role', None):
                 user.role = 'user'
             password = request.POST.get('password')
@@ -69,21 +66,18 @@ def assign_user_to_admin(request):
         form = AssignUserToAdminForm()
     return render(request, 'adminpanel/assign_user_to_admin.html', {'form': form})
 
-# Admin or SuperAdmin: Add task
 @login_required
 def add_task(request):
     if not (is_superadmin(request.user) or is_admin(request.user)):
         return HttpResponseForbidden()
     if request.method == 'POST':
         form = TaskCreateForm(request.POST)
-        # Limit assignable users for admins to only their users
         if is_admin(request.user):
             form.fields['assigned_to'].queryset = User.objects.filter(role='user', assigned_admin=request.user)
         else:
             form.fields['assigned_to'].queryset = User.objects.filter(role='user')
         if form.is_valid():
             task = form.save(commit=False)
-            # Record who assigned the task (admin or superadmin)
             task.assigned_by = request.user
             try:
                 task.full_clean()
@@ -91,7 +85,6 @@ def add_task(request):
                 messages.success(request, 'Task created successfully.')
                 return redirect('adminpanel:manage_tasks')
             except ValidationError as e:
-                # Attach validation errors to the form so they render nicely
                 for field, errors in e.message_dict.items():
                     for err in errors:
                         if field in form.fields:
@@ -106,7 +99,6 @@ def add_task(request):
             form.fields['assigned_to'].queryset = User.objects.filter(role='user')
     return render(request, 'adminpanel/add_task.html', {'form': form})
 
-# SuperAdmin: Edit user
 @login_required
 def edit_user(request, user_id):
     if not is_superadmin(request.user):
@@ -115,7 +107,6 @@ def edit_user(request, user_id):
     admins = User.objects.filter(role='admin')
     if request.method == 'POST':
         form = UserEditForm(request.POST, instance=user)
-        # Only allow assigning an admin for regular users
         if user.role != 'user' and 'assigned_admin' in form.fields:
             form.fields.pop('assigned_admin')
         assigned_admin_id = request.POST.get('assigned_admin')
@@ -131,19 +122,16 @@ def edit_user(request, user_id):
             return redirect('adminpanel:manage_users')
     else:
         form = UserEditForm(instance=user)
-        # Only show assigned_admin input for regular users
         if user.role != 'user' and 'assigned_admin' in form.fields:
             form.fields.pop('assigned_admin')
     return render(request, 'adminpanel/edit_user.html', {'form': form, 'user_obj': user, 'admins': admins})
 
-# SuperAdmin: Delete user
 @login_required
 def delete_user(request, user_id):
     if not is_superadmin(request.user):
         return HttpResponseForbidden()
     user = get_object_or_404(User, id=user_id)
     if request.method == 'POST':
-        # Prevent deleting an admin who still has assigned users
         if user.role == 'admin' and user.assigned_users.exists():
             messages.error(request, 'Cannot delete this admin until their assigned users are reassigned or removed.')
             return redirect('adminpanel:manage_admins')
@@ -152,15 +140,12 @@ def delete_user(request, user_id):
         return redirect('adminpanel:manage_users')
     return render(request, 'adminpanel/delete_user.html', {'user_obj': user})
 
-# SuperAdmin/Admin: Edit task
 @login_required
 def edit_task(request, task_id):
     task = get_object_or_404(Task, id=task_id)
-    # Only SuperAdmin or Admin editing their own users' tasks
     if is_superadmin(request.user) or (is_admin(request.user) and getattr(task.assigned_to, 'assigned_admin_id', None) == request.user.id):
         if request.method == 'POST':
             form = TaskEditForm(request.POST, instance=task)
-            # Limit assignable users for admins to only their users
             if is_admin(request.user):
                 form.fields['assigned_to'].queryset = User.objects.filter(role='user', assigned_admin=request.user)
             else:
@@ -188,11 +173,9 @@ def edit_task(request, task_id):
         return render(request, 'adminpanel/edit_task.html', {'form': form, 'task': task})
     return HttpResponseForbidden()
 
-# SuperAdmin/Admin: Delete task
 @login_required
 def delete_task(request, task_id):
     task = get_object_or_404(Task, id=task_id)
-    # Only SuperAdmin or Admin deleting their own users' tasks
     if is_superadmin(request.user) or (is_admin(request.user) and getattr(task.assigned_to, 'assigned_admin_id', None) == request.user.id):
         if request.method == 'POST':
             task.delete()
@@ -243,7 +226,6 @@ def manage_tasks(request):
     if is_superadmin(request.user):
         tasks = Task.objects.all()
     elif is_admin(request.user):
-        # Admins can only view tasks for their own users
         tasks = Task.objects.filter(assigned_to__assigned_admin=request.user)
     else:
         return HttpResponseForbidden()
@@ -254,7 +236,6 @@ def task_reports(request):
     if is_superadmin(request.user):
         reports = Task.objects.filter(status='completed')
     elif is_admin(request.user):
-        # Admins can only view reports for their own users
         reports = Task.objects.filter(status='completed', assigned_to__assigned_admin=request.user)
     else:
         return HttpResponseForbidden()
